@@ -52,7 +52,8 @@
         }
 
         function toggleVisible(id) {
-            //TODO show password and change eye icon
+            var index = $scope.vm.acmePasses.findIndex(function(e){return e.id === id});
+            $scope.vm.acmePasses[index].visible = !$scope.vm.acmePasses[index].visible;
         }
 
         function transition() {
