@@ -18,6 +18,8 @@
 		vm.clear = clear;
 		vm.users = User.query();
 		vm.pwdVisible = false;
+        vm.toggleVisible = toggleVisible;
+        $scope.inputType = 'password';
 
 		$timeout(function () {
 			angular.element('.form-group:eq(1)>input').focus();
@@ -58,6 +60,15 @@
 		function onSaveError() {
 			vm.isSaving = false;
 		}
+
+        function toggleVisible() {
+            if (!vm.pwdVisible) {
+                $scope.inputType = 'text';
+            } else {
+                $scope.inputType = 'password';
+            }
+            vm.pwdVisible = !vm.pwdVisible;
+        }
 
 		vm.datePickerOpenStatus.createdDate = false;
 		vm.datePickerOpenStatus.lastModifiedDate = false;
