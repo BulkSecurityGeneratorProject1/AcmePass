@@ -9,7 +9,9 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
 
 public class CreatePassTest {
   private WebDriver driver;
@@ -21,7 +23,7 @@ public class CreatePassTest {
   public void setUp() throws Exception {
     System.setProperty("webdriver.gecko.driver", "/usr/local/bin/geckodriver");
     driver = new FirefoxDriver();
-    baseUrl = "http://24.108.28.116:8080";
+    baseUrl = "http://54.202.159.200:8080";
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
     driver.manage().timeouts().setScriptTimeout(15, TimeUnit.SECONDS);
@@ -32,16 +34,30 @@ public class CreatePassTest {
     driver.get(baseUrl);
     driver.findElement(By.id("login")).click();
     driver.findElement(By.id("password")).clear();
-    driver.findElement(By.id("password")).sendKeys("1234");
+    driver.findElement(By.id("password")).sendKeys("princess");
     driver.findElement(By.id("username")).clear();
-    driver.findElement(By.id("username")).sendKeys("tester@test");
+    driver.findElement(By.id("username")).sendKeys("alice.sandhu@acme.com");
     driver.findElement(By.cssSelector("button.btn.btn-primary")).click();
     driver.findElement(By.linkText("ACMEPass")).click();
   }
 
   @Test
-  public void testAddNewPass() throws Exception {
-    driver.get(baseUrl + "/#/acme-pass");
+  public void testAddNewPassword() throws Exception {
+    testAddNewPass("google", "user", "password");
+    verifyLastSavedPassword("google", "user", "password");
+  }
+
+  @Test
+  public void testAddNewPasswordWithUnicode() throws Exception {
+    testAddNewPass("你好好", "বাংলা", "こんにちは");
+    try {
+      assertTrue(isElementPresent(By.cssSelector("pre")));
+    } catch (Error e) {
+      verificationErrors.append(e.toString());
+    }
+  }
+
+  public void testAddNewPass(String site, String login, String password) throws Exception {
     driver.findElement(By.cssSelector("button.btn.btn-primary")).click();
 
     //Verify length of site & error message
@@ -53,25 +69,71 @@ public class CreatePassTest {
     driver.findElement(By.id("field_site")).sendKeys("ab");
     assertEquals("This field is required to be at least 3 characters.", driver.findElement(By.xpath("//p[2]")).getText());
     driver.findElement(By.id("field_site")).clear();
-    driver.findElement(By.id("field_site")).sendKeys("abc");
+    driver.findElement(By.id("field_site")).sendKeys(site);
 
     //Login
     assertEquals("This field is required.", driver.findElement(By.xpath("//div[3]/div/p")).getText());
-    driver.findElement(By.id("field_login")).sendKeys("d");
+    driver.findElement(By.id("field_login")).sendKeys(login);
 
     //Password
     assertEquals("This field is required.", driver.findElement(By.xpath("//div[2]/p")).getText());
-    driver.findElement(By.id("field_password")).sendKeys("1234");
+    driver.findElement(By.id("field_password")).sendKeys(password);
+    driver.findElement(By.cssSelector("span.glyphicon.glyphicon-eye-open")).click();
+    assertEquals(password, driver.findElement(By.id("field_password")).getAttribute("value"));
 
     //Save
     driver.findElement(By.cssSelector("div.modal-footer > button.btn.btn-primary")).click();
-    Thread.sleep(1500);
 
-    //Verify saved data
+  }
+
+  public void verifyLastSavedPassword(String site, String login, String password) throws Exception {
     driver.findElement(By.cssSelector("th")).click();
-    assertEquals("abc", driver.findElement(By.xpath("//td[2]")).getText());
-    assertEquals("d", driver.findElement(By.xpath("//td[3]")).getText());
-    //TODO: assert Password matches
+    assertEquals(site, driver.findElement(By.xpath("//td[2]")).getText());
+    assertEquals(login, driver.findElement(By.xpath("//td[3]")).getText());
+    driver.findElement(By.cssSelector("span.glyphicon.glyphicon-eye-open")).click();
+    assertEquals(password, driver.findElement(By.xpath("//input[@type='text']")).getAttribute("value"));
+  }
+
+
+  @Test
+  public void testTooLongSite() throws Exception {
+    testAddNewPass("atest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426seng", "user", "123456");
+
+      try {
+          assertTrue(isElementPresent(By.cssSelector("pre")));
+      } catch (Error e) {
+          verificationErrors.append(e.toString());
+      }
+  }
+
+  @Test
+  public void testTooLongLogin() throws Exception {
+    testAddNewPass("website", "uatest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengser", "123456");
+
+    try {
+      assertTrue(isElementPresent(By.cssSelector("pre")));
+    } catch (Error e) {
+      verificationErrors.append(e.toString());
+    }
+  }
+
+  @Test
+  public void testTooLongPassword() throws Exception {
+    testAddNewPass("website", "user", "1atest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426sengtest426seng23456");
+
+    try {
+      assertTrue(isElementPresent(By.cssSelector("pre")));
+    } catch (Error e) {
+      verificationErrors.append(e.toString());
+    }
+  }
+
+  @Test
+  public void testDeletePassword() throws Exception {
+    String lastID = driver.findElement(By.cssSelector("td")).getText();
+    driver.findElement(By.xpath("//button[2]")).click();
+    driver.findElement(By.cssSelector("button.btn.btn-danger")).click();
+    assertNotSame(lastID, driver.findElement(By.cssSelector("td")).getText());
   }
 
   @After
