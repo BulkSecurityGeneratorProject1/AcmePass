@@ -104,23 +104,16 @@ public class GeneratePasswordTestSuite {
     
     @Test
     /**
-     * Tests if a warning is displayed to the user when a non-numeric value is given
-     * in the "Length" field, and that the generation button is disabled.
+     * Tests that the generate button is disabled when the password length is negative.
      */
     public void invalidLengthInput() throws Exception {
     	String disabled = driver.findElement(By.xpath("//button[@ng-click='vm.generate()']")).getAttribute("disabled");
-    	String hidden = driver.findElement(By.xpath("//p[@ng-show='pdwGenForm.length.$error.number']"))
-    			.getAttribute("aria-hidden");
     	assert(disabled == null);
-    	assert(hidden.equals("true"));
     	
     	driver.findElement(By.xpath("//input[@id='field_length'][1]")).sendKeys("abc");
     	
     	disabled = driver.findElement(By.xpath("//button[@ng-click='vm.generate()']")).getAttribute("disabled");
-    	hidden = driver.findElement(By.xpath("//p[@ng-show='pdwGenForm.length.$error.number']"))
-    			.getAttribute("aria-hidden");
     	assert(disabled.equals("true"));
-    	assert(hidden.equals("false"));
     }
     
     @Test
@@ -139,17 +132,14 @@ public class GeneratePasswordTestSuite {
     
     @Test
     /**
-     * Tests if the user is unable to generate a password with all generation option
+     * Tests if the user is able to generate a password with all generation option
      * checkboxes unchecked.
      */
     public void noBoxesChecked() throws Exception {
-    	String disabled = driver.findElement(By.xpath("//button[@ng-click='vm.generate()']")).getAttribute("disabled");
-    	assert(disabled == null);
-    	
     	uncheckAllOptions();
-    	
-    	disabled = driver.findElement(By.xpath("//button[@ng-click='vm.generate()']")).getAttribute("disabled");
-    	assert(disabled.equals("true"));
+    	driver.findElement(By.xpath("//button[@ng-click='vm.generate()']")).click();
+    	String text = driver.findElement(By.xpath("//input[@ng-model='vm.password']")).getAttribute("value");
+    	assert(text.equals(""));
     }
     /**
      * Test all of the current combinations (one of lowercase, uppercase, digits, and special characters).
