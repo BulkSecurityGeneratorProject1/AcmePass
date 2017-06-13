@@ -41,27 +41,38 @@
         function generate() {
             var chars = "";
             vm.password = "";
+            
+            // Variable that tracks whether at least one generation option is checked.
+            var optionChecked = false;
 
             if (vm.genOptions.lower) {
+            	optionChecked = true;
                 chars += vm.chars.lower;
             }
 
             if (vm.genOptions.upper) {
+            	optionChecked = true;
                 chars += vm.chars.upper;
             }
 
             if (vm.genOptions.digits) {
+            	optionChecked = true;
                 chars += vm.chars.digits;
             }
 
             if (vm.genOptions.special) {
+            	optionChecked = true;
                 chars += vm.chars.special;
             }
 
-            for (var i = 0; i < vm.genOptions.length; i++) {
-                var position = Math.round(Math.random() * chars.length);
+            while (vm.password.length < vm.genOptions.length && optionChecked) {
+                var position = Math.floor(Math.random() * chars.length);
 
                 if (vm.genOptions.repetition) {
+                	if (vm.genOptions.length > chars.length) {
+                		vm.password = "";
+                		break;
+                	}
                     if (vm.password.indexOf(chars[position]) === -1) {
                         vm.password += chars[position];
                     }
