@@ -1,15 +1,15 @@
-package com.example.tests;
+package com.acme.EditPass;
 
-import java.util.regex.Pattern;
-import java.util.concurrent.TimeUnit;
-import org.junit.*;
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.Select;
 
-public class EmptyLogin {
+import java.util.concurrent.TimeUnit;
+
+public class EmptySite extends TestCase {
   private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
@@ -18,28 +18,27 @@ public class EmptyLogin {
   @Before
   public void setUp() throws Exception {
     driver = new FirefoxDriver();
-    baseUrl = "http://24.108.28.116:8080";
+    baseUrl = "http://54.202.159.200:8080";
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
   }
 
   @Test
-  public void testEmptyLogin() throws Exception {
+  public void testEmptySite() throws Exception {
 	driver.get(baseUrl + "/#/");
-    driver.findElement(By.id("login")).click();
+    driver.findElement(By.xpath("//a[@id='login']/span[2]")).click();
     driver.findElement(By.id("username")).clear();
-    driver.findElement(By.id("username")).sendKeys("ACMEPassEdit@acme.com");
+    driver.findElement(By.id("username")).sendKeys("alice.sandhu@acme.com");
     driver.findElement(By.id("password")).clear();
-    driver.findElement(By.id("password")).sendKeys("ACMEPassEdit");
+    driver.findElement(By.id("password")).sendKeys("princess");
     driver.findElement(By.cssSelector("button.btn.btn-primary")).click();
     driver.findElement(By.linkText("ACMEPass")).click();
     driver.findElement(By.xpath("//td[7]/div/button")).click();
-    driver.findElement(By.id("field_login")).clear();
-    driver.findElement(By.id("field_login")).sendKeys("");
+    driver.findElement(By.id("field_site")).clear();
+    driver.findElement(By.id("field_site")).sendKeys("");
     // ERROR: Caught exception [ERROR: Unsupported command [isEditable | css=div.modal-footer > button.btn.btn-primary | ]]
     driver.findElement(By.cssSelector("button.btn.btn-default")).click();
-    driver.findElement(By.linkText("ACMEPass")).click();
     try {
-      assertEquals("test426", driver.findElement(By.xpath("//td[3]")).getText());
+      assertEquals("test426", driver.findElement(By.xpath("//td[2]")).getText());
     } catch (Error e) {
       verificationErrors.append(e.toString());
     }
