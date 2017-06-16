@@ -1,16 +1,15 @@
-package PaginationSuite;
+package com.acme;
 
-import java.util.concurrent.TimeUnit;
-import org.junit.*;
-import static org.junit.Assert.*;
+import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import java.util.regex.Pattern;
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
 
-public class PaginationTest {
-	
+import java.util.concurrent.TimeUnit;
+
+public class PaginationTest extends TestCase {
 
 	 private WebDriver driver;
 	  private String baseUrl;
@@ -20,7 +19,7 @@ public class PaginationTest {
 	  @Before
 	  public void setUp() throws Exception {
 	    driver = new FirefoxDriver();
-	    baseUrl = "http://24.108.28.116:8080";
+	    baseUrl = "http://54.202.159.200:8080";
 	    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 	  }
 
@@ -29,9 +28,9 @@ public class PaginationTest {
 	    driver.get(baseUrl + "/#/");
 	    driver.findElement(By.id("login")).click();
 	    driver.findElement(By.id("username")).clear();
-	    driver.findElement(By.id("username")).sendKeys("PaginationTest@acme.com");
+	    driver.findElement(By.id("username")).sendKeys("alice.sandhu@acme.com");
 	    driver.findElement(By.id("password")).clear();
-	    driver.findElement(By.id("password")).sendKeys("PaginationTest");
+	    driver.findElement(By.id("password")).sendKeys("princess");
 	    driver.findElement(By.cssSelector("button.btn.btn-primary")).click();
 	    driver.findElement(By.linkText("ACMEPass")).click();
 	    
@@ -55,8 +54,7 @@ public class PaginationTest {
 	    driver.findElement(By.linkText("»")).click();
 	    String second = driver.findElement(By.cssSelector("td")).getText();
 	    try {
-	    	assertThat(first, is(not(second)));
-		      //assertEquals(first, second);
+	        assertNotSame(first, second);
 		    } catch (Error e) {
 		      verificationErrors.append(e.toString());
 		}

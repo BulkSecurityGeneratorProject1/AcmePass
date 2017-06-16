@@ -9,7 +9,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.util.concurrent.TimeUnit;
 
-public class PassViss extends TestCase {
+public class FullDeletionCase extends TestCase {
   private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
@@ -17,7 +17,6 @@ public class PassViss extends TestCase {
 
   @Before
   public void setUp() throws Exception {
-    System.setProperty("webdriver.gecko.driver", "/usr/local/bin/geckodriver");
     driver = new FirefoxDriver();
     baseUrl = "http://54.202.159.200:8080";
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
@@ -26,30 +25,32 @@ public class PassViss extends TestCase {
   }
 
   @Test
-  public void testPassViss() throws Exception {
+  public void testFullDeletionCase() throws Exception {
     driver.get(baseUrl + "/#/");
     driver.findElement(By.id("login")).click();
     driver.findElement(By.id("username")).clear();
-    driver.findElement(By.id("username")).sendKeys("alice.sandhu@acme.com");
+    driver.findElement(By.id("username")).sendKeys("delete@test.test");
     driver.findElement(By.id("password")).clear();
-    driver.findElement(By.id("password")).sendKeys("princess");
+    driver.findElement(By.id("password")).sendKeys("test");
+    driver.findElement(By.id("rememberMe")).click();
     driver.findElement(By.cssSelector("button.btn.btn-primary")).click();
     driver.findElement(By.linkText("ACMEPass")).click();
-
     driver.findElement(By.cssSelector("button.btn.btn-primary")).click();
-    driver.findElement(By.id("field_site")).sendKeys("google");
-    driver.findElement(By.id("field_login")).sendKeys("user");
-    driver.findElement(By.id("field_password")).sendKeys("test426");
+    driver.findElement(By.id("field_site")).clear();
+    driver.findElement(By.id("field_site")).sendKeys("successfull delete test");
+    driver.findElement(By.id("field_login")).clear();
+    driver.findElement(By.id("field_login")).sendKeys("success");
+    driver.findElement(By.id("field_password")).clear();
+    driver.findElement(By.id("field_password")).sendKeys("test");
     driver.findElement(By.cssSelector("div.modal-footer > button.btn.btn-primary")).click();
 
-    driver.findElement(By.cssSelector("th")).click();
-    driver.findElement(By.xpath("//td[7]/div/button")).click();
 
-    driver.findElement(By.cssSelector("span.glyphicon.glyphicon-eye-open")).click();
-    assertEquals("test426", driver.findElement(By.id("field_password")).getAttribute("value"));
-    driver.findElement(By.cssSelector("button.btn.btn-default")).click();
-    driver.findElement(By.id("account-menu")).click();
-    driver.findElement(By.xpath("//a[@id='logout']/span[2]")).click();
+    driver.findElement(By.cssSelector("span.glyphicon.glyphicon-sort-by-attributes-alt")).click();
+    String lastID = driver.findElement(By.cssSelector("td")).getText();
+
+    driver.findElement(By.cssSelector("button.btn.btn-danger")).click();
+    driver.findElement(By.cssSelector("button.btn.btn-danger")).click();
+    assertNotSame(lastID, driver.findElement(By.cssSelector("td")).getText());
   }
 
   @After

@@ -9,7 +9,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.util.concurrent.TimeUnit;
 
-public class PassViss extends TestCase {
+public class UnverifiedAccessCase extends TestCase {
   private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
@@ -17,7 +17,6 @@ public class PassViss extends TestCase {
 
   @Before
   public void setUp() throws Exception {
-    System.setProperty("webdriver.gecko.driver", "/usr/local/bin/geckodriver");
     driver = new FirefoxDriver();
     baseUrl = "http://54.202.159.200:8080";
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
@@ -26,30 +25,14 @@ public class PassViss extends TestCase {
   }
 
   @Test
-  public void testPassViss() throws Exception {
-    driver.get(baseUrl + "/#/");
-    driver.findElement(By.id("login")).click();
-    driver.findElement(By.id("username")).clear();
-    driver.findElement(By.id("username")).sendKeys("alice.sandhu@acme.com");
-    driver.findElement(By.id("password")).clear();
-    driver.findElement(By.id("password")).sendKeys("princess");
-    driver.findElement(By.cssSelector("button.btn.btn-primary")).click();
-    driver.findElement(By.linkText("ACMEPass")).click();
-
-    driver.findElement(By.cssSelector("button.btn.btn-primary")).click();
-    driver.findElement(By.id("field_site")).sendKeys("google");
-    driver.findElement(By.id("field_login")).sendKeys("user");
-    driver.findElement(By.id("field_password")).sendKeys("test426");
-    driver.findElement(By.cssSelector("div.modal-footer > button.btn.btn-primary")).click();
-
-    driver.findElement(By.cssSelector("th")).click();
-    driver.findElement(By.xpath("//td[7]/div/button")).click();
-
-    driver.findElement(By.cssSelector("span.glyphicon.glyphicon-eye-open")).click();
-    assertEquals("test426", driver.findElement(By.id("field_password")).getAttribute("value"));
-    driver.findElement(By.cssSelector("button.btn.btn-default")).click();
-    driver.findElement(By.id("account-menu")).click();
-    driver.findElement(By.xpath("//a[@id='logout']/span[2]")).click();
+  public void testUnverifiedAccessCase() throws Exception {
+    driver.get("http://54.202.159.200:8080/#/acme-pass");
+    Thread.sleep(1500);
+    try {
+      assertEquals("http://54.202.159.200:8080/#/accessdenied", driver.getCurrentUrl());
+    } catch (Error e) {
+      verificationErrors.append(e.toString());
+    }
   }
 
   @After
