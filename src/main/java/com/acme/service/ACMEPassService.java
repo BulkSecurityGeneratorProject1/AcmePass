@@ -80,6 +80,18 @@ public class ACMEPassService {
 		log.debug("Request to get ACMEPass : {}", id);
 		return new ACMEPassDTO(acmePassRepository.findOne(id));
 	}
+	
+	/**
+	 * Get one acmePass by id for the current user.
+	 * 
+	 * @param id the id of the entity
+	 * @return the entity
+	 */
+	@Transactional(readOnly = true)
+	public ACMEPassDTO findOneForCurrentUser(Long id) {
+		log.debug("Request to get ACMEPass for current user: {}", id);
+		return new ACMEPassDTO(acmePassRepository.findOneForCurrentUser(id));
+	}
 
 	/**
 	 * Delete the acmePass by id.
