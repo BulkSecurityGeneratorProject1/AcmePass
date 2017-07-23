@@ -7,6 +7,8 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
+import org.jsoup.*;
+import org.jsoup.safety.*;
 
 import com.acme.domain.enumeration.BlogPostType;
 
@@ -65,16 +67,16 @@ public class BlogPost extends AbstractDatedEntity implements Serializable {
 	}
 
 	public String getContent() {
-		return content;
+		return Jsoup.clean(content, Whitelist.basic());
 	}
 
 	public BlogPost content(String content) {
-		this.content = content;
+		this.content = Jsoup.clean(content, Whitelist.basic());
 		return this;
 	}
 
 	public void setContent(String content) {
-		this.content = content;
+		this.content = Jsoup.clean(content, Whitelist.basic());
 	}
 
 	public BlogPostType getType() {
