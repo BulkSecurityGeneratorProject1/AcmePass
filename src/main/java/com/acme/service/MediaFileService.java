@@ -1,6 +1,8 @@
 package com.acme.service;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -16,12 +18,20 @@ public class MediaFileService {
 	private final Logger log = LoggerFactory.getLogger(MediaFileService.class);
 
 	private final static String MEDIA_FOLDER = new File(".").getAbsolutePath()+"/mediaResources/";
+	private final static Path MEDIA_FOLDER_PATH = Paths.get(MEDIA_FOLDER).normalize();
 
 	public List<File> getMediaFileList() {
 		return Arrays.asList(new File(MEDIA_FOLDER).listFiles(file -> file.isFile() && !file.getName().startsWith(".")));
 	}
 
 	public File getMediaFile(String fileName) {
+        Path filePath = Paths.get(MEDIA_FOLDER, fileName).normalize();
+
+        if (!filePath.startsWith(MEDIA_FOLDER_PATH)) {
+            log.warn("Invalid filename provided");
+            return null;
+        }
+
 		File file = new File(MEDIA_FOLDER + fileName);
 
 		if (file.exists() && file.canRead() && file.isFile()) {
@@ -38,6 +48,12 @@ public class MediaFileService {
 	}
 
 	public boolean deleteMediaFile(String fileName) {
+        Path filePath = Paths.get(MEDIA_FOLDER, fileName).normalize();
+        if (!filePath.startsWith(MEDIA_FOLDER_PATH)) {
+            log.warn("Invalid filename provided");
+            return false;
+        }
+
 		File file = new File(MEDIA_FOLDER + fileName);
 
 		return file.exists() && file.canWrite() && file.delete();
