@@ -105,7 +105,7 @@ public class ACMEPassResource {
 	@Timed
 	public ResponseEntity<ACMEPassDTO> getACMEPass(@PathVariable Long id) {
 		log.debug("REST request to get ACMEPass : {}", id);
-		ACMEPassDTO acmePass = acmePassService.findOne(id);
+		ACMEPassDTO acmePass = acmePassService.findOneForCurrentUser(id);
 		return Optional.ofNullable(acmePass)
 			.map(result -> new ResponseEntity<>(
 					result,
