@@ -10,6 +10,9 @@ import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
 
+import org.jsoup.*;
+import org.jsoup.safety.*;
+
 /**
  * A Comment.
  */
@@ -64,7 +67,8 @@ public class Comment extends AbstractDatedEntity implements Serializable {
 	}
 
 	public String getEmail() {
-		return email;
+		//return email;
+		return "";
 	}
 
 	public Comment email(String email) {
@@ -77,16 +81,19 @@ public class Comment extends AbstractDatedEntity implements Serializable {
 	}
 
 	public String getContent() {
-		return content;
+		//return content;
+		return Jsoup.clean(content, Whitelist.basic());
 	}
 
 	public Comment content(String content) {
-		this.content = content;
+		//this.content = content;
+		this.content = Jsoup.clean(content, Whitelist.basic());
 		return this;
 	}
 
 	public void setContent(String content) {
-		this.content = content;
+		//this.content = content;
+		this.content = Jsoup.clean(content, Whitelist.basic());
 	}
 
 	public BlogPost getPost() {
