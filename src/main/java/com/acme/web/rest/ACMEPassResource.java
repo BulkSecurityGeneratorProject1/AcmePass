@@ -72,6 +72,10 @@ public class ACMEPassResource {
 		if (acmePass.getId() == null) {
 			return createACMEPass(acmePass);
 		}
+		ACMEPassDTO maybePass = acmePassService.findOneForCurrentUser(acmePass.getId());
+		if (maybePass == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 		ACMEPassDTO result = acmePassService.save(acmePass);
 		return ResponseEntity.ok()
 			.headers(HeaderUtil.createEntityUpdateAlert("acmePass", acmePass.getId().toString()))
@@ -123,8 +127,13 @@ public class ACMEPassResource {
 	@Timed
 	public ResponseEntity<Void> deleteACMEPass(@PathVariable Long id) {
 		log.debug("REST request to delete ACMEPass : {}", id);
-		acmePassService.delete(id);
-		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("acmePass", id.toString())).build();
+		ACMEPassDTO acmePass = acmePassService.findOneForCurrentUser(id);
+		if (acmePass == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} else {
+			acmePassService.delete(id);
+			return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("acmePass", id.toString())).build();
+		}
 	}
 
 }
