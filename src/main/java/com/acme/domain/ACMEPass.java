@@ -180,7 +180,15 @@ public class ACMEPass extends AbstractDatedEntity implements Serializable {
             return hexStringToByteArray(aesKey);
         } catch( Exception ex) {
                 Logger.getLogger(ACMEPass.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } finally {
+				if (input != null) {
+					try {
+						input.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
         return null;
     }
 
