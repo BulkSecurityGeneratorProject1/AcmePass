@@ -19,6 +19,11 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.xml.bind.DatatypeConverter;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 /**
  * A ACMEPass.
  */
@@ -28,10 +33,6 @@ import javax.xml.bind.DatatypeConverter;
 public class ACMEPass extends AbstractDatedEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
-	private static final Key k = new SecretKeySpec(new byte[]{(byte) 0x21, (byte) 0x9e, (byte) 0x48, (byte) 0xd7,
-		(byte) 0x50, (byte) 0x49, (byte) 0x1d, (byte) 0x8c, (byte) 0x1e, (byte) 0x37,
-		(byte) 0x28, (byte) 0xaf, (byte) 0xcc, (byte) 0xfd, (byte) 0x9e, (byte) 0xc7}, "AES");
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -89,6 +90,7 @@ public class ACMEPass extends AbstractDatedEntity implements Serializable {
 	}
 
 	public String getPassword() {
+	    Key k = new SecretKeySpec(getAESKeyProperty(), "AES");
 		if (password != null) {
 			try {
 				Cipher c = Cipher.getInstance("AES");
@@ -108,6 +110,7 @@ public class ACMEPass extends AbstractDatedEntity implements Serializable {
 	}
 
 	public void setPassword(String password) {
+	    Key k = new SecretKeySpec(getAESKeyProperty(), "AES");
 		try {
 			Cipher c = Cipher.getInstance("AES");
 			c.init(Cipher.ENCRYPT_MODE, k);
@@ -162,4 +165,34 @@ public class ACMEPass extends AbstractDatedEntity implements Serializable {
 			+ ", lastModifiedDate='" + lastModifiedDate + "'"
 			+ '}';
 	}
+
+    private static byte[] getAESKeyProperty() {
+		Properties prop = new Properties();
+		InputStream input = null;
+        String aesKey = null;
+        try {
+
+            input = new FileInputStream("./config.properties");
+            prop.load(input);
+
+            aesKey = prop.getProperty("aeskey");
+
+            return hexStringToByteArray(aesKey);
+        } catch( Exception ex) {
+                Logger.getLogger(ACMEPass.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    //Source: https://stackoverflow.com/questions/140131/convert-a-string-representation-of-a-hex-dump-to-a-byte-array-using-java
+	private static byte[] hexStringToByteArray(String s) {
+		int len = s.length();
+		byte[] data = new byte[len / 2];
+		for (int i = 0; i < len; i += 2) {
+			data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+								 + Character.digit(s.charAt(i+1), 16));
+		}
+		return data;
+	}
 }
+
